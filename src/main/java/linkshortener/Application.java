@@ -1,9 +1,9 @@
 package linkshortener;
 
-import linkshortener.infrastructure.config.AppConfigurator;
-import linkshortener.presentation.cli.CommandLineInterface;
-import linkshortener.presentation.controllers.AuthController;
-import linkshortener.presentation.controllers.LinkController;
+import linkshortener.dinfrastructure.config.AppConfigurator;
+import linkshortener.cadapters.cli.CommandLineInterface;
+import linkshortener.cadapters.controllers.AuthController;
+import linkshortener.cadapters.controllers.LinkController;
 
 public class Application {
 
