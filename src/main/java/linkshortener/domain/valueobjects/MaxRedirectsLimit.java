@@ -31,10 +31,4 @@ public class MaxRedirectsLimit {
         // Лимит должен быть положительным числом и не превышать определенного значения (например, 1000)
         return limit != null && limit > 0 && limit <= 1000;
     }
-
-    @Override
-    public String toString() {
-        return String.valueOf(limit);
-    }
-
 }
