@@ -1,4 +1,4 @@
-package linkshortener.presentation.dtos;
+package linkshortener.application.dtos;
 
 import linkshortener.domain.valueobjects.CustomUUID;
 

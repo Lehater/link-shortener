@@ -18,7 +18,6 @@ public class Link {
     private MaxRedirectsLimit maxRedirects; // Максимально допустимое количество переходов
     private final LocalDateTime creationDate; // Дата создания ссылки
     private final LocalDateTime expirationDate; // Дата истечения срока действия
-    private boolean isActive; // Состояние ссылки (активна/неактивна)
 
     // Конструктор
     public Link(URL originalUrl, CustomUUID userUUID, MaxRedirectsLimit maxRedirects, LocalDateTime expirationDate) {
@@ -29,7 +28,6 @@ public class Link {
         this.maxRedirects = maxRedirects;
         this.creationDate = LocalDateTime.now();
         this.expirationDate = expirationDate;
-        this.isActive = true;
     }
 
     // Геттеры
@@ -73,24 +71,18 @@ public class Link {
         return expirationDate;
     }
 
-    public boolean isActive() {
-        return isActive && !isExpired();
-    }
 
     // Логика
+
     public void incrementRedirectCount() {
         this.redirectCount++;
-        if (this.redirectCount >= this.maxRedirects.getLimit()) {
-            this.isActive = false; // Деактивация, если превышен лимит переходов
-        }
     }
-
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(this.expirationDate);
     }
 
-    public void deactivate() {
-        this.isActive = false;
+    public boolean isActive() {
+        return !isExpired() && redirectCount < maxRedirects.getLimit();
     }
 
     // Переопределение equals и hashCode
