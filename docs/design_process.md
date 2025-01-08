@@ -100,8 +100,8 @@
 
 4. **Уведомление пользователя**
 
-- При недоступности ссылки (`limitReached` или `expired`) Use Case формирует уведомление, которое передаётся через
-  `NotificationService` → в консоль.
+- При недоступности ссылки (`limitReached` или `expired`) Use Case формирует уведомление, которое передаётся
+  в консоль.
 
 5. **Идентификация пользователя по UUID**
 
@@ -129,7 +129,7 @@
 
 - `domain` (Entities, Value Objects)
 - `application` (Use Cases, Interfaces для репозиториев)
-- `infrastructure` (Repository In-memory, Config, NotificationService)
+- `infrastructure` (Repository In-memory, Config)
 - `presentation` (CLI, Controllers, DTOs)
 
 2. **Конфигурация**
