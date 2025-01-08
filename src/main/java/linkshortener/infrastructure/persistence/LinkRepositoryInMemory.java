@@ -26,7 +26,7 @@ public class LinkRepositoryInMemory implements LinkRepository {
     public Link findByShortUrl(ShortURL shortUrl) {
         return linkStorage.values()
                 .stream()
-                .filter(link -> link.getShortUrl().equals(shortUrl))
+                .filter(link -> link.getShortUrl().toString().equals(shortUrl.toString()))
                 .findFirst()
                 .orElse(null);
     }

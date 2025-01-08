@@ -1,14 +1,9 @@
 package linkshortener.application.usecases.link;
 
 import linkshortener.domain.entities.Link;
-import linkshortener.domain.entities.User;
-import linkshortener.domain.valueobjects.ShortURL;
-import linkshortener.domain.valueobjects.MaxRedirectsLimit;
-import linkshortener.domain.exceptions.LinkNotFoundException;
-import linkshortener.domain.exceptions.UnauthorizedAccessException;
 import linkshortener.application.interfaces.LinkRepository;
-
-import java.time.LocalDateTime;
+import linkshortener.domain.valueobjects.MaxRedirectsLimit;
+import linkshortener.domain.valueobjects.ShortURL;
 
 public class EditShortLinkUseCase {
 
@@ -18,28 +13,25 @@ public class EditShortLinkUseCase {
         this.linkRepository = linkRepository;
     }
 
-    public Link execute(
-            EditLinkRequest editLinkRequest
-    ) throws LinkNotFoundException, UnauthorizedAccessException {
-
-        // Получение ссылки
-        Link link = linkRepository.findByShortUrl(editLinkRequest.getShortUrl());
-
+    public EditLinkResponse execute(String userUuid, ShortURL shortUrl, MaxRedirectsLimit maxRedirects) throws Exception {
+        // 1. Найти ссылку по короткому URL
+        Link link = linkRepository.findByShortUrl(shortUrl);
         if (link == null) {
-            throw new LinkNotFoundException("Ссылка не найдена");
+            throw new IllegalArgumentException("Ссылка не найдена.");
         }
 
-        // Обновление параметров ссылки
-        if (editLinkRequest.getMaxRedirectsLimit() != null) {
-            link.setMaxRedirects(editLinkRequest.getMaxRedirectsLimit());
+        // 2. Проверить, принадлежит ли ссылка пользователю
+        if (!link.getUserId().toString().equals(userUuid)) {
+            throw new SecurityException("Нет доступа к данной ссылке.");
         }
 
-        if (editLinkRequest.getExpirationDate() != null) {
-            LocalDateTime.now().plusHours(24); // TODO
-        }
+        // 3. Обновить лимит переходов
+        link.setMaxRedirects(maxRedirects);
 
+        // 4. Сохранить изменения
+        linkRepository.update(link);
 
-        // Сохранение изменений
-        return linkRepository.update(link);
+        // 5. Сформировать ответ
+        return new EditLinkResponse(link.getUserId(), link.getShortUrl());
     }
 }

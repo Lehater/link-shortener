@@ -71,10 +71,9 @@ public class CommandLineInterface {
         String shortUrl = cli.getNextLine("Введите короткую ссылку для редактирования: ");
         String shortUrlLimitString = cli.getNextLine("Введите лимит переходов для этой ссылки: ");
         try {
-//            LinkDTO linkDTO = linkController.editLink(userDTO, shortUrl, shortUrlLimitString);
-//            cli.print("Короткая ссылка обновлена: " + linkDTO.getShortUrl());
-//            cli.print("Ваш UUID: " + linkDTO.getUserUuid());
-            cli.print("Ваш UUID: ");
+            LinkDTO linkDTO = linkController.editLink(userDTO, shortUrl, shortUrlLimitString);
+            cli.print("Короткая ссылка обновлена: " + linkDTO.getShortUrl());
+            cli.print("Ваш UUID: " + linkDTO.getUserUuid());
         } catch (Exception e) {
             cli.print("Ошибка при создании ссылки: " + e.getMessage());
         }

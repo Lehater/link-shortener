@@ -3,6 +3,8 @@ package linkshortener.presentation.controllers;
 import linkshortener.application.usecases.link.*;
 import linkshortener.application.usecases.user.ManageUUIDUseCase;
 import linkshortener.domain.entities.Link;
+import linkshortener.domain.valueobjects.MaxRedirectsLimit;
+import linkshortener.domain.valueobjects.ShortURL;
 import linkshortener.domain.valueobjects.URL;
 import linkshortener.presentation.dtos.LinkDTO;
 import linkshortener.presentation.dtos.UserDTO;
@@ -44,15 +46,15 @@ public class LinkController {
         return new LinkDTO(response.getUserUuid().toString(),response.getShortURL().toString());
     }
 
-//    public LinkDTO editLink(UserDTO userDTO, String shortUrlString, String MaxRedirectsString) throws Exception {
-//        ShortURL shortURL = new ShortURL(shortUrlString);
-//        MaxRedirectsLimit maxRedirectsLimit = new MaxRedirectsLimit(MaxRedirectsString);
-//        EditLinkResponse link = editShortLinkUseCase.execute(
-//                userDTO.getUuid(), shortURL, maxRedirectsLimit
-//        );
-//
-//        return new LinkDTO(link.getShortUrl(), link.getUserId());
-//    }
+    public LinkDTO editLink(UserDTO userDTO, String shortUrlString, String maxRedirectsString) throws Exception {
+        ShortURL shortURL = new ShortURL(shortUrlString);
+        MaxRedirectsLimit maxRedirectsLimit = new MaxRedirectsLimit(maxRedirectsString);
+        EditLinkResponse response = editShortLinkUseCase.execute(
+                userDTO.getUuid().toString(), shortURL, maxRedirectsLimit
+        );
+
+        return new LinkDTO(response.getUserUuid().toString(), response.getShortURL().toString());
+    }
 
 //    public void deleteLink(Link link) throws Exception {
 //        deleteShortLinkUseCase.execute(link);
