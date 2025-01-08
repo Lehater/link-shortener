@@ -70,7 +70,7 @@ public class CommandLineInterface {
     }
 
     private void handleCreate(UserDTO userDTO) {
-        String originalUrl = cli.getNextLine("Введите оригинальный URL: ");
+        String originalUrl = cli.getNextLine("Введите оригинальный URL (например: http://ya.ru): ");
         try {
             LinkDTO linkDTO = linkController.createLink(userDTO, originalUrl);
             cli.print("Короткая ссылка создана: " + linkDTO.getShortUrl());

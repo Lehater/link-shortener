@@ -22,6 +22,8 @@ public class RedirectLinkUseCase {
 
         // 2. Проверить активность ссылки
         if (!link.isActive()) {
+            // Если не активна, удаляем из БД
+            linkRepository.delete(link.getId());
             throw new IllegalStateException("Ссылка недействительна или срок её действия истёк.");
         }
 

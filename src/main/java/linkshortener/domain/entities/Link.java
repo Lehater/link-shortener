@@ -29,7 +29,6 @@ public class Link {
         this.maxRedirects = maxRedirects;
         this.creationDate = LocalDateTime.now();
         this.expirationDate = expirationDate;
-        this.isActive = true;
     }
 
     // Геттеры
@@ -74,7 +73,8 @@ public class Link {
     }
 
     public boolean isActive() {
-        return isActive && !isExpired();
+        // Активна, пока не истёк срок и пока счётчик не достиг лимита
+        return !isExpired() && (redirectCount < maxRedirects.getLimit());
     }
 
     // Логика
