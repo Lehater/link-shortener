@@ -72,25 +72,41 @@ public class CommandLineInterface {
     private void handleCreate(UserDTO userDTO) {
         String originalUrl = cli.getNextLine("Введите оригинальный URL: ");
 
-        // Новый шаг — спросить, сколько часов хочет пользователь
+        // Спросить лимит переходов
+        String userMaxRedirectsInput = cli.getNextLine(
+                "Введите лимит переходов (число). Оставьте пустым для значения по умолчанию: "
+        );
+        int userMaxRedirects;
+        try {
+            if (userMaxRedirectsInput.isEmpty()) {
+                userMaxRedirects = 0; // пусть 0 => Use Case возьмет системное значение
+            } else {
+                userMaxRedirects = Integer.parseInt(userMaxRedirectsInput);
+            }
+        } catch (NumberFormatException e) {
+            userMaxRedirects = 0;
+        }
+
+        // Спросить время жизни (часов)
         String userLifetimeInput = cli.getNextLine(
-                "Введите время жизни (часов) или оставьте пустым для значения по-умолчанию: ");
+                "Введите время жизни в часах. Оставьте пустым для значения по умолчанию: "
+        );
         int userLifetimeHours;
         try {
             if (userLifetimeInput.isEmpty()) {
-                userLifetimeHours = 0; // или -1: пусть UseCase решает, что с этим делать
+                userLifetimeHours = 0;
             } else {
                 userLifetimeHours = Integer.parseInt(userLifetimeInput);
             }
         } catch (NumberFormatException e) {
-            userLifetimeHours = 0; // если ввели какую-то ерунду
+            userLifetimeHours = 0;
         }
 
         try {
-            // Передаём userLifetimeHours в контроллер
-            LinkDTO linkDTO = linkController.createLink(userDTO, originalUrl, userLifetimeHours);
+            // Вызов контроллера
+            LinkDTO linkDTO = linkController.createLink(userDTO, originalUrl, userLifetimeHours, userMaxRedirects);
+
             cli.print("Короткая ссылка создана: " + linkDTO.getShortUrl());
-            cli.print("Ваш UUID: " + linkDTO.getUserUuid());
         } catch (Exception e) {
             cli.print("Ошибка при создании ссылки: " + e.getMessage());
         }
@@ -122,7 +138,6 @@ public class CommandLineInterface {
         try {
             String originalUrl = linkController.redirectLink(shortUrl);
             cli.print("Открываю в браузере: " + originalUrl);
-
             // Открытие браузера с использованием Desktop API
             Desktop desktop = Desktop.getDesktop();
             desktop.browse(new URI(originalUrl));

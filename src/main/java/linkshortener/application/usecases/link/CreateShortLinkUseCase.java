@@ -25,52 +25,55 @@ public class CreateShortLinkUseCase {
         this.configService = configService;
     }
 
-    public CreateLinkResponse execute(CreateLinkRequest createLinkRequest) throws Exception {
+    public CreateLinkResponse execute(CreateLinkRequest request) throws Exception {
 
-        // 1. Определить лимит переходов (как раньше)
-        MaxRedirectsLimit maxRedirects = createLinkRequest.getMaxRedirectsLimit();
-        if (maxRedirects == null) {
-            maxRedirects = configService.getDefaultMaxRedirects();
+        // ====== Время жизни ======
+        int userHours = request.getRequestedLifetimeHours();
+        int systemHours = configService.getDefaultLifetimeHours(); // например, 24
+
+        // Если пользователь ввёл 0 или меньше => значит не указал
+        if (userHours <= 0) {
+            userHours = systemHours;
         }
+        // Берём меньшее
+        int finalLifetime = Math.min(userHours, systemHours);
 
-        // 2. Получаем, сколько часов хочет пользователь (может быть 0, -1 или не задано)
-        int userLifetimeHours = createLinkRequest.getRequestedLifetimeHours();
-        // Допустим, если у пользователя ничего не введено, возвращается 0.
+        // Итоговая дата истечения
+        LocalDateTime expirationDate = LocalDateTime.now().plusHours(finalLifetime);
 
-        // 3. Получаем системный срок жизни (из конфиг-файла), скажем 24 часа
-        int systemLifetimeHours = configService.getDefaultLifetimeHours();
+        // ====== Лимит переходов ======
+        int userMax = request.getRequestedMaxRedirects();
+        int systemMax = configService.getDefaultMaxRedirects().getLimit(); // допустим, 5
 
-        // 4. Если пользователь не задал время (userLifetimeHours <= 0),
-        //    то берём целиком systemLifetimeHours.
-        if (userLifetimeHours <= 0) {
-            userLifetimeHours = systemLifetimeHours;
+        // Если пользователь не указал => userMax <= 0 => берём systemMax
+        if (userMax <= 0) {
+            userMax = systemMax;
         }
+        // Берём большее
+        int finalMaxRedirects = Math.max(userMax, systemMax);
 
-        // 5. Выбираем меньшее из пользовательского и системного
-        int finalLifetimeHours = Math.min(userLifetimeHours, systemLifetimeHours);
+        // Создаём объект MaxRedirectsLimit из числа
+        MaxRedirectsLimit maxRedirectsLimit = new MaxRedirectsLimit(String.valueOf(finalMaxRedirects));
 
-        // 6. Рассчитываем итоговую дату истечения
-        LocalDateTime expirationDate = LocalDateTime.now().plusHours(finalLifetimeHours);
-
-        // 7. Генерируем короткую ссылку (как раньше)
+        // ====== (C) Генерация короткой ссылки ======
         ShortURL shortUrl = urlShortenerService.generateShortUrl(
-                createLinkRequest.getOriginalUrl().toString(),
-                createLinkRequest.getUserUuid().toString()
+                request.getOriginalUrl().toString(),
+                request.getUserUuid().toString()
         );
 
-        // 8. Создаём сущность Link
+        // ====== (D) Создание доменной сущности Link ======
         Link link = new Link(
-                createLinkRequest.getOriginalUrl(),
-                createLinkRequest.getUserUuid(),
-                maxRedirects,
-                expirationDate  // тут уже готовая дата: now + min(пользователь, системная)
+                request.getOriginalUrl(),
+                request.getUserUuid(),
+                maxRedirectsLimit,  // передаём только что рассчитанный лимит
+                expirationDate      // и дату окончания (из пункта A)
         );
         link.setShortUrl(shortUrl);
 
-        // 9. Сохраняем ссылку
+        // Сохранить в репозиторий
         linkRepository.save(link);
 
-        // 10. Возвращаем ответ
+        // ====== (E) Возврат результата
         return new CreateLinkResponse(
                 link.getUserId(),
                 link.getShortUrl(),

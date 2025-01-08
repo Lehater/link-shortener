@@ -10,43 +10,40 @@ public class CreateLinkRequest {
 
     private final CustomUUID userUUID;
     private final URL originalUrl;
-    private final MaxRedirectsLimit maxRedirects;
 
-    // Пользователь может указать желаемое время жизни ссылки (в часах).
-    // Если 0 (или отрицательно), значит пользователь ничего не указал —
-    // тогда будем использовать значение из конфигурации.
+    // Пользователь может ввести лимит переходов сам,
+    // 0 или отрицательное число = не указал => берем системное
+    private final int requestedMaxRedirects;
+
+    // Пользователь может ввести время жизни (часов),
+    // 0 или отрицательное число = не указал => берем системное
     private final int requestedLifetimeHours;
 
-    /**
-     * Конструктор, когда пользователь не указывает ни лимит переходов, ни время жизни.
-     */
     public CreateLinkRequest(CustomUUID userUUID, URL originalUrl) {
-        this(userUUID, originalUrl, null, 0);
+        this(userUUID, originalUrl, 0, 0);
     }
 
     /**
      * Основной конструктор
      *
-     * @param userUUID             UUID пользователя
-     * @param originalUrl          Исходный (длинный) URL
-     * @param maxRedirects         Обёртка для лимита переходов (может быть null, если не указано)
-     * @param requestedLifetimeHours Сколько часов хочет пользователь (0 или < 0, если не указал)
+     * @param userUUID - UUID пользователя
+     * @param originalUrl - исходный URL
+     * @param requestedMaxRedirects - желаемый лимит переходов
+     * @param requestedLifetimeHours - желаемое время жизни (часов)
      */
     public CreateLinkRequest(
             CustomUUID userUUID,
             URL originalUrl,
-            MaxRedirectsLimit maxRedirects,
+            int requestedMaxRedirects,
             int requestedLifetimeHours
     ) {
-        // Проверка обязательных полей
         this.userUUID = Objects.requireNonNull(userUUID, "userUUID is required");
         if (originalUrl == null) {
             throw new IllegalArgumentException("originalUrl is required");
         }
         this.originalUrl = originalUrl;
 
-        // Остальные поля могут быть не заданы
-        this.maxRedirects = maxRedirects;
+        this.requestedMaxRedirects = requestedMaxRedirects;
         this.requestedLifetimeHours = requestedLifetimeHours;
     }
 
@@ -58,14 +55,10 @@ public class CreateLinkRequest {
         return originalUrl;
     }
 
-    public MaxRedirectsLimit getMaxRedirectsLimit() {
-        return maxRedirects;
+    public int getRequestedMaxRedirects() {
+        return requestedMaxRedirects;
     }
 
-    /**
-     * Возвращает желаемое время жизни ссылки в часах (может быть 0 или отрицательно,
-     * если пользователь ничего не указал).
-     */
     public int getRequestedLifetimeHours() {
         return requestedLifetimeHours;
     }
