@@ -1,9 +1,6 @@
 package linkshortener.infrastructure.config;
 
-import linkshortener.application.usecases.link.CreateShortLinkUseCase;
-import linkshortener.application.usecases.link.DeleteShortLinkUseCase;
-import linkshortener.application.usecases.link.EditShortLinkUseCase;
-import linkshortener.application.usecases.link.RedirectLinkUseCase;
+import linkshortener.application.usecases.link.*;
 import linkshortener.application.usecases.user.AuthenticateUserUseCase;
 import linkshortener.application.usecases.user.ManageUUIDUseCase;
 import linkshortener.application.usecases.user.RegisterUserUseCase;
@@ -32,6 +29,7 @@ public class AppConfigurator {
         DeleteShortLinkUseCase deleteShortLinkUseCase = new DeleteShortLinkUseCase(linkRepository);
         RedirectLinkUseCase redirectLinkUseCase = new RedirectLinkUseCase(linkRepository, notificationService);
         ManageUUIDUseCase manageUUIDUseCase = new ManageUUIDUseCase(userRepository, linkRepository);
+        ListUserLinksUseCase listUserLinksUseCase = new ListUserLinksUseCase(linkRepository);
 
         // Возвращаем контроллер
         return new LinkController(
@@ -39,7 +37,8 @@ public class AppConfigurator {
                 editShortLinkUseCase,
                 deleteShortLinkUseCase,
                 redirectLinkUseCase,
-                manageUUIDUseCase
+                manageUUIDUseCase,
+                listUserLinksUseCase
         );
     }
 

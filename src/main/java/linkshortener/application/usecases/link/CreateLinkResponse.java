@@ -2,7 +2,6 @@ package linkshortener.application.usecases.link;
 
 import linkshortener.domain.valueobjects.MaxRedirectsLimit;
 import linkshortener.domain.valueobjects.ShortURL;
-import linkshortener.domain.valueobjects.URL;
 import linkshortener.domain.valueobjects.CustomUUID;
 
 import java.time.LocalDateTime;

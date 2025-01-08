@@ -1,7 +1,6 @@
 package linkshortener.application.usecases.link;
 
 import linkshortener.domain.entities.Link;
-import linkshortener.domain.exceptions.UnauthorizedAccessException;
 import linkshortener.domain.valueobjects.MaxRedirectsLimit;
 import linkshortener.domain.valueobjects.ShortURL;
 import linkshortener.domain.valueobjects.URL;
@@ -24,33 +23,40 @@ public class CreateShortLinkUseCase {
         this.urlShortenerService = urlShortenerService;
         this.configService = configService;
     }
+
     public CreateLinkResponse execute(CreateLinkRequest createLinkRequest) throws Exception {
 
         // 1. Получить maxRedirects из запроса
         MaxRedirectsLimit maxRedirects = createLinkRequest.getMaxRedirectsLimit();
-        // Если не задан (null) — берём дефолт из configService
         if (maxRedirects == null) {
             maxRedirects = configService.getDefaultMaxRedirects();
         }
 
-        // 2. Аналогично обработать expirationDate
+        // 2. Установить expirationDate
         LocalDateTime expirationDate = createLinkRequest.getExpirationDate();
         if (expirationDate == null) {
             expirationDate = LocalDateTime.now().plusHours(configService.getDefaultLifetimeHours());
         }
 
-        // 3. Создать доменную сущность Link, передав уже «готовые» значения
+        // 3. Сгенерировать короткую ссылку
+        ShortURL shortUrl = urlShortenerService.generateShortUrl(
+                createLinkRequest.getOriginalUrl().toString(),
+                createLinkRequest.getUserUuid().toString()
+        );
+
+        // 4. Создать доменную сущность Link
         Link link = new Link(
                 createLinkRequest.getOriginalUrl(),
-                createLinkRequest.getUserUuid(),  // или getUserUuid(), в зависимости от вашей структуры
+                createLinkRequest.getUserUuid(),
                 maxRedirects,
                 expirationDate
         );
+        link.setShortUrl(shortUrl); // Устанавливаем сгенерированную короткую ссылку
 
-        // 4. Сохранить ссылку (если нужно)
+        // 5. Сохранить ссылку
         linkRepository.save(link);
 
-        // 5. Сформировать ответ (CreateLinkResponse) и вернуть наружу
+        // 6. Сформировать ответ
         return new CreateLinkResponse(
                 link.getUserId(),
                 link.getShortUrl(),

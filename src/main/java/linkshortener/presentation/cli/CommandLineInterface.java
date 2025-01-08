@@ -6,6 +6,8 @@ import linkshortener.presentation.dtos.LinkDTO;
 import linkshortener.presentation.dtos.UserDTO;
 import utils.ConsoleUtils;
 
+import java.util.List;
+
 public class CommandLineInterface {
 
     private final AuthController authController;
@@ -88,6 +90,19 @@ public class CommandLineInterface {
     }
 
     private void handleList(UserDTO userDTO) {
-        // Реализация обработки команды отображения списка ссылок пользователя
+        try {
+            List<LinkDTO> links = linkController.listLinks(userDTO);
+            if (links.isEmpty()) {
+                cli.print("У вас нет коротких ссылок.");
+            } else {
+                cli.print("Ваши короткие ссылки:");
+                for (LinkDTO link : links) {
+                    cli.print("- " + link.getShortUrl());
+                }
+            }
+        } catch (Exception e) {
+            cli.print("Ошибка при получении списка ссылок: " + e.getMessage());
+        }
     }
+
 }

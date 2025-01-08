@@ -1,7 +1,5 @@
 package linkshortener.domain.valueobjects;
 
-//import java.util.Objects;
-
 public class ShortURL {
 
     private final String shortUrl;
@@ -18,25 +16,20 @@ public class ShortURL {
     }
 
     private boolean isValidShortUrl(String shortUrl) {
-        // Простая валидация
-        return shortUrl != null && shortUrl.matches("^[a-zA-Z0-9._-]{1,20}$");
+        if (shortUrl == null) {
+            return false;
+        }
+        // Поддерживаем варианты:
+        // 1) clck.ru/XXXX
+        // 2) http://clck.ru/XXXX
+        // 3) https://clck.ru/XXXX
+        // где XXXX – 1-20 символов (латиница и/или цифры)
+        String pattern = "^(?:https?://)?clck\\.ru/[A-Za-z0-9]{1,20}$";
+        return shortUrl.matches(pattern);
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true; // Сравнение по ссылке
-//        if (o == null || getClass() != o.getClass()) return false; // Проверка класса
-//        ShortURL shortURL = (ShortURL) o;
-//        return Objects.equals(shortUrl, shortURL.shortUrl); // Сравнение содержимого
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(shortUrl); // Генерация хэш-кода на основе содержимого
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return shortUrl; // Удобное представление в виде строки
-//    }
+    public String toString() {
+        return shortUrl;
+    }
+
 }
