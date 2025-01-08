@@ -43,7 +43,7 @@ public class LinkController {
                 new CreateLinkRequest(userDTO.getUuid(), new URL(originalUrl))
         );
 
-        return new LinkDTO(response.getUserUuid().toString(),response.getShortURL().toString());
+        return new LinkDTO(response.getUserUuid().toString(), response.getShortURL().toString());
     }
 
     public LinkDTO editLink(UserDTO userDTO, String shortUrlString, String maxRedirectsString) throws Exception {
@@ -56,9 +56,11 @@ public class LinkController {
         return new LinkDTO(response.getUserUuid().toString(), response.getShortURL().toString());
     }
 
-//    public void deleteLink(Link link) throws Exception {
-//        deleteShortLinkUseCase.execute(link);
-//    }
+    public void deleteLink(UserDTO userDTO, String shortUrl) throws Exception {
+        ShortURL shortURL = new ShortURL(shortUrl);
+        deleteShortLinkUseCase.execute(userDTO.getUuid().toString(), shortURL);
+    }
+
 
     public String redirectLink(String shortUrl) throws Exception {
         ShortURL shortURL = new ShortURL(shortUrl);

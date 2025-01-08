@@ -15,7 +15,7 @@ public interface LinkRepository {
 
     Link update(Link link); // Обновить ссылку
 
-//    void delete(CustomUUID linkUUID); // Удалить ссылку
+    void delete(CustomUUID linkUUID); // Удалить ссылку
 
     Link findById(CustomUUID linkUuid); // Найти ссылку по уникальному идентификатору
 

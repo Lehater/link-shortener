@@ -83,7 +83,13 @@ public class CommandLineInterface {
     }
 
     private void handleDelete(UserDTO userDTO) {
-        // Реализация обработки команды удаления ссылки
+        String shortUrl = cli.getNextLine("Введите короткую ссылку для удаления: ");
+        try {
+            linkController.deleteLink(userDTO, shortUrl);
+            cli.print("Короткая ссылка успешно удалена: " + shortUrl);
+        } catch (Exception e) {
+            cli.print("Ошибка при удалении ссылки: " + e.getMessage());
+        }
     }
 
     private void handleRedirect(UserDTO userDTO) {

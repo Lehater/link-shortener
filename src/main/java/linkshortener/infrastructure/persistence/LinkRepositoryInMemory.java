@@ -49,8 +49,8 @@ public class LinkRepositoryInMemory implements LinkRepository {
         }
     }
 
-//    @Override
-//    public void delete(CustomUUID linkUUID) {
-//        linkStorage.remove(linkUUID);
-//    }
+    @Override
+    public void delete(CustomUUID linkUUID) {
+        linkStorage.remove(linkUUID);
+    }
 }
