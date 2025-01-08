@@ -15,10 +15,8 @@ public class CommandLineInterface {
     private final AuthController authController;
     private final LinkController linkController;
     private final ConsoleUtils cli;
-    private final UserDTO userDTO = null;
 
-    public CommandLineInterface(AuthController authController,LinkController linkController) {
-
+    public CommandLineInterface(AuthController authController, LinkController linkController) {
         this.authController = authController;
         this.linkController = linkController;
         this.cli = new ConsoleUtils();
@@ -26,12 +24,23 @@ public class CommandLineInterface {
 
     public void start() {
         cli.print("Добро пожаловать в Сервис Сокращения Ссылок!");
-        String userUuid = cli.getNextLine("Введите ваш UUID (оставьте пустым для создания нового): ");
-        UserDTO userDTO = authController.authenticate(userUuid);
+        while (true) {
+            cli.print("\nДля начала работы выполните вход.");
+            String userUuid = cli.getNextLine("Введите ваш UUID (оставьте пустым для создания нового): ");
+            UserDTO userDTO = authController.authenticate(userUuid);
+            cli.print("Добро пожаловать, пользователь с UUID: " + userDTO.getUuid());
+
+            // Начало пользовательской сессии
+            session(userDTO);
+        }
+    }
+
+    private void session(UserDTO userDTO) {
         while (true) {
             String command = cli.getNextLine(
-                    "Введите команду (create, edit, delete, redirect, list, exit): "
+                    "Введите команду (create, edit, delete, redirect, list, logout, exit): "
             ).trim().toLowerCase();
+
             switch (command) {
                 case "create":
                     handleCreate(userDTO);
@@ -48,9 +57,12 @@ public class CommandLineInterface {
                 case "list":
                     handleList(userDTO);
                     break;
+                case "logout":
+                    cli.print("Выход из текущей сессии.");
+                    return; // Выход из сессии, возвращаемся к аутентификации
                 case "exit":
                     cli.print("Выход из приложения.");
-                    return;
+                    System.exit(0); // Полный выход из приложения
                 default:
                     cli.print("Неизвестная команда.");
             }
@@ -62,24 +74,20 @@ public class CommandLineInterface {
         try {
             LinkDTO linkDTO = linkController.createLink(userDTO, originalUrl);
             cli.print("Короткая ссылка создана: " + linkDTO.getShortUrl());
-            cli.print("Ваш UUID: " + linkDTO.getUserUuid());
         } catch (Exception e) {
             cli.print("Ошибка при создании ссылки: " + e.getMessage());
         }
     }
 
     private void handleEdit(UserDTO userDTO) {
-        // Реализация обработки команды редактирования ссылки
         String shortUrl = cli.getNextLine("Введите короткую ссылку для редактирования: ");
         String shortUrlLimitString = cli.getNextLine("Введите лимит переходов для этой ссылки: ");
         try {
             LinkDTO linkDTO = linkController.editLink(userDTO, shortUrl, shortUrlLimitString);
             cli.print("Короткая ссылка обновлена: " + linkDTO.getShortUrl());
-            cli.print("Ваш UUID: " + linkDTO.getUserUuid());
         } catch (Exception e) {
-            cli.print("Ошибка при создании ссылки: " + e.getMessage());
+            cli.print("Ошибка при редактировании ссылки: " + e.getMessage());
         }
-
     }
 
     private void handleDelete(UserDTO userDTO) {
@@ -106,7 +114,6 @@ public class CommandLineInterface {
         }
     }
 
-
     private void handleList(UserDTO userDTO) {
         try {
             List<LinkDTO> links = linkController.listLinks(userDTO);
@@ -122,5 +129,4 @@ public class CommandLineInterface {
             cli.print("Ошибка при получении списка ссылок: " + e.getMessage());
         }
     }
-
 }

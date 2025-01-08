@@ -1,5 +1,7 @@
 package linkshortener.domain.valueobjects;
 
+import java.util.Objects;
+
 public class ShortURL {
 
     private final String shortUrl;
@@ -28,6 +30,20 @@ public class ShortURL {
         return shortUrl.matches(pattern);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true; // Сравнение ссылок
+        if (o == null || getClass() != o.getClass()) return false; // Разные классы
+        ShortURL shortURL = (ShortURL) o;
+        return shortUrl.equals(shortURL.shortUrl); // Сравнение строк
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(shortUrl); // Генерация хэш-кода на основе строки
+    }
+
+    @Override
     public String toString() {
         return shortUrl;
     }
