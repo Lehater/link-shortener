@@ -27,7 +27,7 @@ public class AppConfigurator {
                 urlShortenerService, configService);
         EditShortLinkUseCase editShortLinkUseCase = new EditShortLinkUseCase(linkRepository);
         DeleteShortLinkUseCase deleteShortLinkUseCase = new DeleteShortLinkUseCase(linkRepository);
-        RedirectLinkUseCase redirectLinkUseCase = new RedirectLinkUseCase(linkRepository, notificationService);
+        RedirectLinkUseCase redirectLinkUseCase = new RedirectLinkUseCase(linkRepository);
         ManageUUIDUseCase manageUUIDUseCase = new ManageUUIDUseCase(userRepository, linkRepository);
         ListUserLinksUseCase listUserLinksUseCase = new ListUserLinksUseCase(linkRepository);
 

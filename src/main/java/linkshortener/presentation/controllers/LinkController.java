@@ -59,13 +59,13 @@ public class LinkController {
 //    public void deleteLink(Link link) throws Exception {
 //        deleteShortLinkUseCase.execute(link);
 //    }
-//
-//    public String redirectLink(String shortUrl) throws Exception {
-//        ShortURL shortURL = new ShortURL(shortUrl);
-//
-//        return redirectLinkUseCase.execute(shortURL);
-//    }
-//
+
+    public String redirectLink(String shortUrl) throws Exception {
+        ShortURL shortURL = new ShortURL(shortUrl);
+
+        return redirectLinkUseCase.execute(shortURL);
+    }
+
     public List<LinkDTO> listLinks(UserDTO userDTO) throws Exception {
         List<Link> links = listUserLinksUseCase.execute(userDTO.getUuid());
         return links.stream()

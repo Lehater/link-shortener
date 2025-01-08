@@ -6,6 +6,8 @@ import linkshortener.presentation.dtos.LinkDTO;
 import linkshortener.presentation.dtos.UserDTO;
 import utils.ConsoleUtils;
 
+import java.awt.*;
+import java.net.URI;
 import java.util.List;
 
 public class CommandLineInterface {
@@ -85,8 +87,19 @@ public class CommandLineInterface {
     }
 
     private void handleRedirect(UserDTO userDTO) {
-        // Реализация обработки команды перенаправления по короткой ссылке
+        String shortUrl = cli.getNextLine("Введите короткую ссылку для перенаправления: ");
+        try {
+            String originalUrl = linkController.redirectLink(shortUrl);
+            cli.print("Открываю в браузере: " + originalUrl);
+
+            // Открытие браузера с использованием Desktop API
+            Desktop desktop = Desktop.getDesktop();
+            desktop.browse(new URI(originalUrl));
+        } catch (Exception e) {
+            cli.print("Ошибка при перенаправлении: " + e.getMessage());
+        }
     }
+
 
     private void handleList(UserDTO userDTO) {
         try {

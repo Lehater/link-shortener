@@ -29,6 +29,9 @@ public class URL {
         }
     }
 
-    // Переопределение equals и hashCode при необходимости
+    public String toString(){
+
+        return this.url;
+    }
 
 }

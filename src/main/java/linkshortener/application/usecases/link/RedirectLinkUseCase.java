@@ -1,52 +1,35 @@
 package linkshortener.application.usecases.link;
 
 import linkshortener.domain.entities.Link;
-import linkshortener.domain.exceptions.LinkNotFoundException;
 import linkshortener.application.interfaces.LinkRepository;
-import linkshortener.application.interfaces.NotificationService;
 import linkshortener.domain.valueobjects.ShortURL;
+
 
 public class RedirectLinkUseCase {
 
     private final LinkRepository linkRepository;
-    private final NotificationService notificationService;
 
-    public RedirectLinkUseCase(
-            LinkRepository linkRepository,
-            NotificationService notificationService
-    ) {
+    public RedirectLinkUseCase(LinkRepository linkRepository) {
         this.linkRepository = linkRepository;
-        this.notificationService = notificationService;
     }
 
-    public String execute(ShortURL shortUrl) throws LinkNotFoundException {
-
-        // Получение ссылки
-//        Link link = linkRepository.findByShortUrl(shortUrl);
+    public String execute(ShortURL shortUrl) throws Exception {
+        // 1. Найти ссылку по короткому URL
         Link link = linkRepository.findByShortUrl(shortUrl);
-
         if (link == null) {
-            throw new LinkNotFoundException("Ссылка не найдена");
+            throw new IllegalArgumentException("Ссылка не найдена.");
         }
 
-        // Проверка активности ссылки
+        // 2. Проверить активность ссылки
         if (!link.isActive()) {
-            throw new IllegalStateException("Ссылка недоступна");
+            throw new IllegalStateException("Ссылка недействительна или срок её действия истёк.");
         }
 
-        // Увеличение счетчика переходов
+        // 3. Инкрементировать счётчик переходов
         link.incrementRedirectCount();
         linkRepository.update(link);
 
-        // Проверка достижений лимитов
-        if (!link.isActive()) {
-            notificationService.sendNotification(
-                    link.getUserId().toString(),
-                    "Лимит переходов по вашей ссылке исчерпан или срок действия истек."
-            );
-        }
-
-        // Возврат оригинального URL для перенаправления
-        return link.getOriginalUrl().getUrl();
+        // 4. Вернуть оригинальный URL
+        return link.getOriginalUrl().toString();
     }
 }
