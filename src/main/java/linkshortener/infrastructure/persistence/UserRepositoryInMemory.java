@@ -2,7 +2,7 @@ package linkshortener.infrastructure.persistence;
 
 import linkshortener.application.interfaces.UserRepository;
 import linkshortener.domain.entities.User;
-import linkshortener.domain.valueobjects.UUID;
+import linkshortener.domain.valueobjects.CustomUUID;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class UserRepositoryInMemory implements UserRepository {
     }
 
     @Override
-    public User findByUuid(UUID UUID) {
+    public User findByUuid(CustomUUID UUID) {
         return userStorage.get(UUID.toString());
     }
 

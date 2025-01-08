@@ -1,12 +1,11 @@
-package linkshortener.presentation.dtos;
+package linkshortener.application.usecases.user;
 
 import linkshortener.domain.valueobjects.CustomUUID;
 
-public class UserDTO {
+public class CreateUser {
+    private final CustomUUID uuid;
 
-   private final CustomUUID uuid;
-
-    public UserDTO(CustomUUID uuid) {
+    public CreateUser(CustomUUID uuid) {
         this.uuid = uuid;
     }
 

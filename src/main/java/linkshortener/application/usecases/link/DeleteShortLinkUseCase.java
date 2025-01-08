@@ -1,8 +1,6 @@
-package linkshortener.application.usecases;
+package linkshortener.application.usecases.link;
 
 import linkshortener.domain.entities.Link;
-import linkshortener.domain.entities.User;
-import linkshortener.domain.valueobjects.ShortURL;
 import linkshortener.domain.exceptions.LinkNotFoundException;
 import linkshortener.domain.exceptions.UnauthorizedAccessException;
 import linkshortener.application.interfaces.LinkRepository;
@@ -24,7 +22,7 @@ public class DeleteShortLinkUseCase {
         }
 
         // Удаление ссылки
-        linkRepository.delete(link);
+//        linkRepository.delete(link);
 
     }
 }

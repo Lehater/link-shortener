@@ -1,8 +1,7 @@
-package linkshortener.application.usecases;
+package linkshortener.application.usecases.link;
 
 import linkshortener.domain.entities.Link;
 import linkshortener.domain.exceptions.LinkNotFoundException;
-import linkshortener.domain.exceptions.UnauthorizedAccessException;
 import linkshortener.application.interfaces.LinkRepository;
 import linkshortener.application.interfaces.NotificationService;
 import linkshortener.domain.valueobjects.ShortURL;
@@ -24,7 +23,7 @@ public class RedirectLinkUseCase {
 
         // Получение ссылки
 //        Link link = linkRepository.findByShortUrl(shortUrl);
-        Link link = linkRepository.findByShortUrl(userId, shortUrl);
+        Link link = linkRepository.findByShortUrl(shortUrl);
 
         if (link == null) {
             throw new LinkNotFoundException("Ссылка не найдена");

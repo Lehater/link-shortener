@@ -1,10 +1,9 @@
 package linkshortener.presentation.cli;
 
-import linkshortener.domain.entities.User;
-import linkshortener.domain.valueobjects.MaxRedirectsLimit;
 import linkshortener.presentation.controllers.AuthController;
 import linkshortener.presentation.controllers.LinkController;
 import linkshortener.presentation.dtos.LinkDTO;
+import linkshortener.presentation.dtos.UserDTO;
 import utils.ConsoleUtils;
 
 public class CommandLineInterface {
@@ -12,7 +11,7 @@ public class CommandLineInterface {
     private final AuthController authController;
     private final LinkController linkController;
     private final ConsoleUtils cli;
-    private final User user = null;
+    private final UserDTO userDTO = null;
 
     public CommandLineInterface(AuthController authController,LinkController linkController) {
 
@@ -24,26 +23,26 @@ public class CommandLineInterface {
     public void start() {
         cli.print("Добро пожаловать в Сервис Сокращения Ссылок!");
         String userUuid = cli.getNextLine("Введите ваш UUID (оставьте пустым для создания нового): ");
-        User user = authController.authenticate(userUuid);
+        UserDTO userDTO = authController.authenticate(userUuid);
         while (true) {
             String command = cli.getNextLine(
                     "Введите команду (create, edit, delete, redirect, list, exit): "
             ).trim().toLowerCase();
             switch (command) {
                 case "create":
-                    handleCreate(user);
+                    handleCreate(userDTO);
                     break;
                 case "edit":
-                    handleEdit(user);
+                    handleEdit(userDTO);
                     break;
                 case "delete":
-                    handleDelete(user);
+                    handleDelete(userDTO);
                     break;
                 case "redirect":
-                    handleRedirect(user);
+                    handleRedirect(userDTO);
                     break;
                 case "list":
-                    handleList(user);
+                    handleList(userDTO);
                     break;
                 case "exit":
                     cli.print("Выход из приложения.");
@@ -54,10 +53,10 @@ public class CommandLineInterface {
         }
     }
 
-    private void handleCreate(User user) {
+    private void handleCreate(UserDTO userDTO) {
         String originalUrl = cli.getNextLine("Введите оригинальный URL: ");
         try {
-            LinkDTO linkDTO = linkController.createLink(user, originalUrl);
+            LinkDTO linkDTO = linkController.createLink(userDTO, originalUrl);
             cli.print("Короткая ссылка создана: " + linkDTO.getShortUrl());
             cli.print("Ваш UUID: " + linkDTO.getUserUuid());
         } catch (Exception e) {
@@ -65,30 +64,30 @@ public class CommandLineInterface {
         }
     }
 
-    private void handleEdit(User user) {
+    private void handleEdit(UserDTO userDTO) {
         // Реализация обработки команды редактирования ссылки
         String shortUrl = cli.getNextLine("Введите короткую ссылку для редактирования: ");
         String shortUrlLimitString = cli.getNextLine("Введите лимит переходов для этой ссылки: ");
         try {
-            MaxRedirectsLimit maxRedirectsLimit = new MaxRedirectsLimit(shortUrlLimitString);
-            LinkDTO linkDTO = linkController.editLink(user, shortUrl, maxRedirectsLimit);
-            cli.print("Короткая ссылка обновлена: " + linkDTO.getShortUrl());
-            cli.print("Ваш UUID: " + linkDTO.getUserUuid());
+//            LinkDTO linkDTO = linkController.editLink(userDTO, shortUrl, shortUrlLimitString);
+//            cli.print("Короткая ссылка обновлена: " + linkDTO.getShortUrl());
+//            cli.print("Ваш UUID: " + linkDTO.getUserUuid());
+            cli.print("Ваш UUID: ");
         } catch (Exception e) {
             cli.print("Ошибка при создании ссылки: " + e.getMessage());
         }
 
     }
 
-    private void handleDelete(User user) {
+    private void handleDelete(UserDTO userDTO) {
         // Реализация обработки команды удаления ссылки
     }
 
-    private void handleRedirect(User user) {
+    private void handleRedirect(UserDTO userDTO) {
         // Реализация обработки команды перенаправления по короткой ссылке
     }
 
-    private void handleList(User user) {
+    private void handleList(UserDTO userDTO) {
         // Реализация обработки команды отображения списка ссылок пользователя
     }
 }

@@ -1,11 +1,11 @@
 package linkshortener.domain.valueobjects;
 
-public class UUID {
+public class CustomUUID {
 
     private final String uuid;
 
 
-    public UUID(String uuid) {
+    public CustomUUID(String uuid) {
         if (!isValidID(uuid)) {
             throw new IllegalArgumentException("Некорректный UUID: " + uuid);
         }

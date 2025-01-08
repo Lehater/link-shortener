@@ -3,17 +3,17 @@ package linkshortener.domain.entities;
 import linkshortener.domain.valueobjects.ShortURL;
 import linkshortener.domain.valueobjects.MaxRedirectsLimit;
 import linkshortener.domain.valueobjects.URL;
-import linkshortener.domain.valueobjects.UUID;
+import linkshortener.domain.valueobjects.CustomUUID;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Link {
 
-    private final UUID UUID; // Уникальный идентификатор ссылки
+    private final CustomUUID UUID; // Уникальный идентификатор ссылки
     private final URL originalUrl; // Оригинальный URL
     private ShortURL shortUrl; // Сокращенный URL
-    private final UUID userUUID; // Идентификатор пользователя, создавшего ссылку
+    private final CustomUUID userUUID; // Идентификатор пользователя, создавшего ссылку
     private int redirectCount; // Текущее количество переходов по ссылке
     private MaxRedirectsLimit maxRedirects; // Максимально допустимое количество переходов
     private final LocalDateTime creationDate; // Дата создания ссылки
@@ -21,8 +21,8 @@ public class Link {
     private boolean isActive; // Состояние ссылки (активна/неактивна)
 
     // Конструктор
-    public Link(URL originalUrl, UUID userUUID, MaxRedirectsLimit maxRedirects, LocalDateTime expirationDate) {
-        this.UUID = new UUID(java.util.UUID.randomUUID().toString());
+    public Link(URL originalUrl, CustomUUID userUUID, MaxRedirectsLimit maxRedirects, LocalDateTime expirationDate) {
+        this.UUID = new CustomUUID(java.util.UUID.randomUUID().toString());
         this.originalUrl = originalUrl;
         this.userUUID = userUUID;
         this.redirectCount = 0;
@@ -33,7 +33,7 @@ public class Link {
     }
 
     // Геттеры
-    public UUID getId() {
+    public CustomUUID getId() {
         return UUID;
     }
 
@@ -49,7 +49,7 @@ public class Link {
         this.shortUrl = shortUrl;
     }
 
-    public UUID getUserId() {
+    public CustomUUID getUserId() {
         return userUUID;
     }
 

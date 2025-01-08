@@ -1,9 +1,9 @@
 package linkshortener.presentation.controllers;
 
-import linkshortener.application.usecases.AuthenticateUserUseCase;
-import linkshortener.application.usecases.RegisterUserUseCase;
+import linkshortener.application.usecases.user.AuthenticateUserUseCase;
+import linkshortener.application.usecases.user.RegisterUserUseCase;
 import linkshortener.domain.exceptions.UserNotFoundException;
-import linkshortener.domain.valueobjects.UUID;
+import linkshortener.domain.valueobjects.CustomUUID;
 import linkshortener.presentation.dtos.UserDTO;
 
 public class AuthController {
@@ -17,13 +17,13 @@ public class AuthController {
 
     public UserDTO authenticate(String uuidString) {
         try {
-            UUID uuid = uuidString != null ? new UUID(uuidString) : null;
+            CustomUUID uuid = uuidString != null ? new CustomUUID(uuidString) : null;
             if (uuid == null) {
-                return registerUserUseCase.execute();
+                return new UserDTO(registerUserUseCase.execute().getUuid());
             }
             return authenticateUserUseCase.execute(uuid);
         } catch (UserNotFoundException | IllegalArgumentException e) {
-            return registerUserUseCase.execute();
+            return new UserDTO(registerUserUseCase.execute().getUuid());
         }
     }
 }

@@ -1,10 +1,9 @@
-package linkshortener.application.usecases;
+package linkshortener.application.usecases.user;
 
 import linkshortener.application.interfaces.UserRepository;
 import linkshortener.domain.entities.User;
 
-import linkshortener.domain.valueobjects.UUID;
-import linkshortener.presentation.dtos.UserDTO;
+import linkshortener.domain.valueobjects.CustomUUID;
 
 
 public class RegisterUserUseCase {
@@ -14,14 +13,14 @@ public class RegisterUserUseCase {
         this.userRepository = userRepository;
     }
 
-    public UserDTO execute() {
-        UUID newUuid = new UUID(java.util.UUID.randomUUID().toString());
+    public CreateUser execute() {
+        CustomUUID newUuid = new CustomUUID(java.util.UUID.randomUUID().toString());
         User newUser = new User(newUuid);
         userRepository.save(newUser);
         return toUserDTO(newUser);
     }
 
-    private UserDTO toUserDTO(User user) {
-        return new UserDTO(user.getUuid());
+    private CreateUser toUserDTO(User user) {
+        return new CreateUser(user.getUuid());
     }
 }

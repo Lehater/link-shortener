@@ -1,23 +1,23 @@
 package linkshortener.presentation.dtos;
 
 import linkshortener.domain.valueobjects.ShortURL;
-import linkshortener.domain.valueobjects.UUID;
+import linkshortener.domain.valueobjects.CustomUUID;
 
 public class LinkDTO {
 
     private final ShortURL shortUrl;
-    private final UUID userUUID;
+    private final CustomUUID userUUID;
 
-    public LinkDTO(ShortURL shortUrl, UUID userUUID) {
-        this.shortUrl = shortUrl;
+    public LinkDTO(CustomUUID userUUID,ShortURL shortUrl) {
         this.userUUID = userUUID;
+        this.shortUrl = shortUrl;
     }
 
     public ShortURL getShortUrl() {
         return shortUrl;
     }
 
-    public UUID getUserUuid() {
+    public CustomUUID getUserUuid() {
         return userUUID;
     }
 

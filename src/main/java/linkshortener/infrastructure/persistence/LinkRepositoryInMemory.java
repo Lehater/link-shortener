@@ -2,7 +2,7 @@ package linkshortener.infrastructure.persistence;
 
 import linkshortener.application.interfaces.LinkRepository;
 import linkshortener.domain.entities.Link;
-import linkshortener.domain.valueobjects.UUID;
+import linkshortener.domain.valueobjects.CustomUUID;
 import linkshortener.domain.valueobjects.ShortURL;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class LinkRepositoryInMemory implements LinkRepository {
 
-    private final Map<UUID, Link> linkStorage = new HashMap<>();
+    private final Map<CustomUUID, Link> linkStorage = new HashMap<>();
 
     @Override
     public void save(Link link) {
@@ -18,7 +18,7 @@ public class LinkRepositoryInMemory implements LinkRepository {
     }
 
     @Override
-    public Link findById(UUID linkUUID) {
+    public Link findById(CustomUUID linkUUID) {
         return linkStorage.get(linkUUID);
     }
 
@@ -32,7 +32,7 @@ public class LinkRepositoryInMemory implements LinkRepository {
     }
 
     @Override
-    public List<Link> findAllByUserId(UUID userUUID) {
+    public List<Link> findAllByUserUUID(CustomUUID userUUID) {
         return linkStorage.values()
                 .stream()
                 .filter(link -> link.getUserId().equals(userUUID))
@@ -49,8 +49,8 @@ public class LinkRepositoryInMemory implements LinkRepository {
         }
     }
 
-    @Override
-    public void delete(UUID linkUUID) {
-        linkStorage.remove(linkUUID);
-    }
+//    @Override
+//    public void delete(CustomUUID linkUUID) {
+//        linkStorage.remove(linkUUID);
+//    }
 }

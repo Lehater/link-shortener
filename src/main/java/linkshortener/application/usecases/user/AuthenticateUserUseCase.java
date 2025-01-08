@@ -1,9 +1,9 @@
-package linkshortener.application.usecases;
+package linkshortener.application.usecases.user;
 
 import linkshortener.application.interfaces.UserRepository;
 import linkshortener.domain.entities.User;
 import linkshortener.domain.exceptions.UserNotFoundException;
-import linkshortener.domain.valueobjects.UUID;
+import linkshortener.domain.valueobjects.CustomUUID;
 import linkshortener.presentation.dtos.UserDTO;
 
 public class AuthenticateUserUseCase {
@@ -13,7 +13,7 @@ public class AuthenticateUserUseCase {
         this.userRepository = userRepository;
     }
 
-    public UserDTO execute(UUID uuid) throws UserNotFoundException {
+    public UserDTO execute(CustomUUID uuid) throws UserNotFoundException {
         User user = userRepository.findByUuid(uuid);
         return toUserDTO(user);
     }

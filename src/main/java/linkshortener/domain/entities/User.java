@@ -1,6 +1,6 @@
 package linkshortener.domain.entities;
 
-import linkshortener.domain.valueobjects.UUID;
+import linkshortener.domain.valueobjects.CustomUUID;
 
 //import java.util.ArrayList;
 //import java.util.Collections;
@@ -8,19 +8,19 @@ import linkshortener.domain.valueobjects.UUID;
 
 public class User {
 
-    private final UUID UUID; // Уникальный идентификатор пользователя
+    private final CustomUUID UUID; // Уникальный идентификатор пользователя
 
     // Конструктор
     public User() {
-        this.UUID = new UUID(java.util.UUID.randomUUID().toString());
+        this.UUID = new CustomUUID(java.util.UUID.randomUUID().toString());
     }
 
-    public User(UUID uuid) {
+    public User(CustomUUID uuid) {
         this.UUID = uuid;
     }
 
     // Геттеры
-    public UUID getUuid() {
+    public CustomUUID getUuid() {
         return UUID;
     }
 

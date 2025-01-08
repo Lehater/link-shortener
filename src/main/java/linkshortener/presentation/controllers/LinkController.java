@@ -1,14 +1,14 @@
 package linkshortener.presentation.controllers;
 
-import linkshortener.application.usecases.*;
-import linkshortener.domain.entities.Link;
-import linkshortener.domain.entities.User;
-import linkshortener.domain.valueobjects.ShortURL;
+import linkshortener.application.usecases.link.*;
+import linkshortener.application.usecases.user.ManageUUIDUseCase;
 import linkshortener.domain.valueobjects.MaxRedirectsLimit;
+import linkshortener.domain.valueobjects.ShortURL;
+import linkshortener.domain.valueobjects.URL;
 import linkshortener.presentation.dtos.LinkDTO;
+import linkshortener.presentation.dtos.UserDTO;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class LinkController {
 
@@ -32,34 +32,37 @@ public class LinkController {
         this.manageUUIDUseCase = manageUUIDUseCase;
     }
 
-    public LinkDTO createLink(User user, String originalUrl) throws Exception {
-        Link link = createShortLinkUseCase.execute(user, originalUrl, null, null);
+    public LinkDTO createLink(UserDTO userDTO, String originalUrl) throws Exception {
 
-        return new LinkDTO(link.getShortUrl(), link.getUserId());
+        CreateLinkResponse link = createShortLinkUseCase.execute(
+                new CreateLinkRequest(userDTO.getUuid(), new URL(originalUrl))
+        );
+
+        return new LinkDTO(link.getUserUuid(),link.getShortURL());
     }
 
-    public LinkDTO editLink(User user, String shortUrlString, MaxRedirectsLimit newMaxRedirects) throws Exception {
-        ShortURL shortURL = new ShortURL(shortUrlString);
-        Link link = editShortLinkUseCase.execute(user, shortURL, newMaxRedirects);
+//    public LinkDTO editLink(UserDTO userDTO, String shortUrlString, String MaxRedirectsString) throws Exception {
+//        ShortURL shortURL = new ShortURL(shortUrlString);
+//        MaxRedirectsLimit maxRedirectsLimit = new MaxRedirectsLimit(MaxRedirectsString);
+//        EditLinkResponse link = editShortLinkUseCase.execute(
+//                userDTO.getUuid(), shortURL, maxRedirectsLimit
+//        );
+//
+//        return new LinkDTO(link.getShortUrl(), link.getUserId());
+//    }
 
-        return new LinkDTO(link.getShortUrl(), link.getUserId());
-    }
-
-    public void deleteLink(Link link) throws Exception {
-        deleteShortLinkUseCase.execute(link);
-    }
-
-    public String redirectLink(String shortUrl) throws Exception {
-        ShortURL shortURL = new ShortURL(shortUrl);
-
-        return redirectLinkUseCase.execute(shortURL);
-    }
-
-    public List<LinkDTO> listLinks(User user) throws Exception {
-        List<Link> links = manageUUIDUseCase.getLinksForUser(user.getUuid());
-        return links.stream()
-                .map(link -> new LinkDTO(link.getShortUrl(), link.getUserId()))
-                .collect(Collectors.toList());
-    }
+//    public void deleteLink(Link link) throws Exception {
+//        deleteShortLinkUseCase.execute(link);
+//    }
+//
+//    public String redirectLink(String shortUrl) throws Exception {
+//        ShortURL shortURL = new ShortURL(shortUrl);
+//
+//        return redirectLinkUseCase.execute(shortURL);
+//    }
+//
+//    public List<LinkDTO> listLinks(User user) throws Exception {
+//        return manageUUIDUseCase.getLinksForUser(user.getUuid());
+//    }
 
 }

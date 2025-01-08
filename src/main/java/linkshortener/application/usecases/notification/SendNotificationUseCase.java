@@ -1,6 +1,6 @@
-package linkshortener.application.usecases;
+package linkshortener.application.usecases.notification;
 
-import linkshortener.domain.valueobjects.UUID;
+import linkshortener.domain.valueobjects.CustomUUID;
 import linkshortener.application.interfaces.NotificationService;
 
 public class SendNotificationUseCase {
@@ -13,7 +13,7 @@ public class SendNotificationUseCase {
 
     public void execute(String userUuidString, String message) {
 
-        UUID userUUID = new UUID(userUuidString);
+        CustomUUID userUUID = new CustomUUID(userUuidString);
 
         notificationService.sendNotification(userUUID.toString(), message);
     }
