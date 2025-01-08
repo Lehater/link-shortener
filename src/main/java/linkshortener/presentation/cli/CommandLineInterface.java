@@ -70,10 +70,27 @@ public class CommandLineInterface {
     }
 
     private void handleCreate(UserDTO userDTO) {
-        String originalUrl = cli.getNextLine("Введите оригинальный URL (например: http://ya.ru): ");
+        String originalUrl = cli.getNextLine("Введите оригинальный URL: ");
+
+        // Новый шаг — спросить, сколько часов хочет пользователь
+        String userLifetimeInput = cli.getNextLine(
+                "Введите время жизни (часов) или оставьте пустым для значения по-умолчанию: ");
+        int userLifetimeHours;
         try {
-            LinkDTO linkDTO = linkController.createLink(userDTO, originalUrl);
+            if (userLifetimeInput.isEmpty()) {
+                userLifetimeHours = 0; // или -1: пусть UseCase решает, что с этим делать
+            } else {
+                userLifetimeHours = Integer.parseInt(userLifetimeInput);
+            }
+        } catch (NumberFormatException e) {
+            userLifetimeHours = 0; // если ввели какую-то ерунду
+        }
+
+        try {
+            // Передаём userLifetimeHours в контроллер
+            LinkDTO linkDTO = linkController.createLink(userDTO, originalUrl, userLifetimeHours);
             cli.print("Короткая ссылка создана: " + linkDTO.getShortUrl());
+            cli.print("Ваш UUID: " + linkDTO.getUserUuid());
         } catch (Exception e) {
             cli.print("Ошибка при создании ссылки: " + e.getMessage());
         }

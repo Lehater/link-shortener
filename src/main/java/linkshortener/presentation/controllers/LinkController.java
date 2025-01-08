@@ -37,13 +37,24 @@ public class LinkController {
         this.listUserLinksUseCase = listUserLinksUseCase;
     }
 
-    public LinkDTO createLink(UserDTO userDTO, String originalUrl) throws Exception {
+    public LinkDTO createLink(UserDTO userDTO, String originalUrl, int userLifetimeHours) throws Exception {
 
-        CreateLinkResponse response = createShortLinkUseCase.execute(
-                new CreateLinkRequest(userDTO.getUuid(), new URL(originalUrl))
+        // 1. Собираем CreateLinkRequest
+        CreateLinkRequest request = new CreateLinkRequest(
+                userDTO.getUuid(),
+                new URL(originalUrl),
+                null,     // MaxRedirectsLimit (если пользователь не указал)
+                userLifetimeHours
         );
 
-        return new LinkDTO(response.getUserUuid().toString(), response.getShortURL().toString());
+        // 2. Вызываем UseCase
+        CreateLinkResponse response = createShortLinkUseCase.execute(request);
+
+        // 3. Формируем DTO
+        return new LinkDTO(
+                response.getUserUuid().toString(),
+                response.getShortURL().toString()
+        );
     }
 
     public LinkDTO editLink(UserDTO userDTO, String shortUrlString, String maxRedirectsString) throws Exception {

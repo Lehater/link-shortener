@@ -8,6 +8,7 @@ import linkshortener.application.interfaces.*;
 
 import java.time.LocalDateTime;
 
+
 public class CreateShortLinkUseCase {
 
     private final LinkRepository linkRepository;
@@ -26,37 +27,50 @@ public class CreateShortLinkUseCase {
 
     public CreateLinkResponse execute(CreateLinkRequest createLinkRequest) throws Exception {
 
-        // 1. Получить maxRedirects из запроса
+        // 1. Определить лимит переходов (как раньше)
         MaxRedirectsLimit maxRedirects = createLinkRequest.getMaxRedirectsLimit();
         if (maxRedirects == null) {
             maxRedirects = configService.getDefaultMaxRedirects();
         }
 
-        // 2. Установить expirationDate
-        LocalDateTime expirationDate = createLinkRequest.getExpirationDate();
-        if (expirationDate == null) {
-            expirationDate = LocalDateTime.now().plusHours(configService.getDefaultLifetimeHours());
+        // 2. Получаем, сколько часов хочет пользователь (может быть 0, -1 или не задано)
+        int userLifetimeHours = createLinkRequest.getRequestedLifetimeHours();
+        // Допустим, если у пользователя ничего не введено, возвращается 0.
+
+        // 3. Получаем системный срок жизни (из конфиг-файла), скажем 24 часа
+        int systemLifetimeHours = configService.getDefaultLifetimeHours();
+
+        // 4. Если пользователь не задал время (userLifetimeHours <= 0),
+        //    то берём целиком systemLifetimeHours.
+        if (userLifetimeHours <= 0) {
+            userLifetimeHours = systemLifetimeHours;
         }
 
-        // 3. Сгенерировать короткую ссылку
+        // 5. Выбираем меньшее из пользовательского и системного
+        int finalLifetimeHours = Math.min(userLifetimeHours, systemLifetimeHours);
+
+        // 6. Рассчитываем итоговую дату истечения
+        LocalDateTime expirationDate = LocalDateTime.now().plusHours(finalLifetimeHours);
+
+        // 7. Генерируем короткую ссылку (как раньше)
         ShortURL shortUrl = urlShortenerService.generateShortUrl(
                 createLinkRequest.getOriginalUrl().toString(),
                 createLinkRequest.getUserUuid().toString()
         );
 
-        // 4. Создать доменную сущность Link
+        // 8. Создаём сущность Link
         Link link = new Link(
                 createLinkRequest.getOriginalUrl(),
                 createLinkRequest.getUserUuid(),
                 maxRedirects,
-                expirationDate
+                expirationDate  // тут уже готовая дата: now + min(пользователь, системная)
         );
-        link.setShortUrl(shortUrl); // Устанавливаем сгенерированную короткую ссылку
+        link.setShortUrl(shortUrl);
 
-        // 5. Сохранить ссылку
+        // 9. Сохраняем ссылку
         linkRepository.save(link);
 
-        // 6. Сформировать ответ
+        // 10. Возвращаем ответ
         return new CreateLinkResponse(
                 link.getUserId(),
                 link.getShortUrl(),
